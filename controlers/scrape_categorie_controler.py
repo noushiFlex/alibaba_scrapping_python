@@ -1,6 +1,6 @@
 from models.categorie import Categorie
 from models.sous_catgorie import SousCategorie
-import csv,os,time
+import csv, os, time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -27,6 +27,7 @@ class CategorieScraper:
             print("Erreur : Le nom de la catégorie n'a pas pu être chargé.")
         except Exception as e:
             print(f"Erreur inattendue lors de la création de la catégorie : {e}")
+
     def scrape_categorie_products(self):
         with open(self.categorie.pathFile, 'w', newline='') as file:
             writer = csv.writer(file)
@@ -53,26 +54,29 @@ class CategorieScraper:
                 return
 
             for number, product in enumerate(product_elements):
+                try:
+                    products_images = product.find_element(By.CSS_SELECTOR, 'img.picture-image')
+                    prodcuts_prices = product.find_element(By.CSS_SELECTOR, 'div.hugo3-util-ellipsis.hugo3-fw-heavy')
+                    products_name = product.find_element(By.CSS_SELECTOR, 'div.hugo4-product-element.subject span')
+
+                    img_src = products_images.get_attribute('src')
+                    price_text = prodcuts_prices.text
+                    product_name = products_name.get_attribute('title')
+
+                    img_name = f"image_article_{number}.png"
+                    methode.download_image(img_src, img_name, self.categorie.pathImage)
+
+                    writer.writerow([product_name, price_text, img_src])
+                    print(f'Produit: {product_name}, Prix: {price_text}, Image: {img_src}')
                 
-                products_images = product.find_element(By.CSS_SELECTOR, 'div.hugo4-product-picture img.picture-image')
-                prodcuts_prices = product.find_element(By.CSS_SELECTOR, 'div.hugo3-util-ellipsis.hugo3-fw-heavy')
-                products_name = product.find_element(By.CSS_SELECTOR, 'div.hugo4-product-element.subject span')
+                except NoSuchElementException:
+                    print(f"", end='')
 
-                img_src = products_images.get_attribute('src')
-                price_text = prodcuts_prices.text
-                product_name = products_name.get_attribute('title')
-
-                img_name = f"image_article_{number}.png"
-                methode.download_image(img_src, img_name, self.categorie.pathImage)
-
-                writer.writerow([product_name, price_text, img_src])
-                print(f'Produit: {product_name}, Prix: {price_text}, Image: {img_src}')
-                
     def scrape_sub_categorie_products(self):
         print("Scraping des sous-categories.")
         for link in self.sub_categorie_links:
             self.sous_categorie = SousCategorie(url=link)
-            self.sous_categorie.create_folder(self.categorie.pathCategorie,self.driver)
+            self.sous_categorie.create_folder(self.categorie.pathCategorie, self.driver)
             print(f"Scraping de la sous categorie : {self.sous_categorie.filter_name}")
             self.sous_categorie.get_all_products()
             
@@ -85,4 +89,4 @@ class CategorieScraper:
             print('Fin du scraping.')
             
         except Exception as e:
-            print(f"Erreur inattendue lors de l'execution principale : {e}")
+            print(f"Erreur inattendue lors de l'exécution principale : {e}")
