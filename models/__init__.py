@@ -1,2 +1,1 @@
-from . import categorie
-from . import produit
+from . import categorie,sous_catgorie,methode

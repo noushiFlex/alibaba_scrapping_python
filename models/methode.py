@@ -1,4 +1,6 @@
 import time,os,requests
+
+# Scroll to the bottom of the page
 def scroll_to_bottom(driver):
     last_height = driver.execute_script("return document.body.scrollHeight")
     while True:
@@ -8,6 +10,8 @@ def scroll_to_bottom(driver):
         if new_height == last_height:
             break
         last_height = new_height
+        
+# Download image from URL
 def download_image(img_url, img_name, images_dir_path):
     try:
         if not os.path.exists(images_dir_path):

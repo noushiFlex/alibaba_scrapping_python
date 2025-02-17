@@ -9,31 +9,36 @@ class Categorie:
         self.url = url
         self.safe_categorie_name = ''.join(c for c in self.nom if c.isalnum() or c in (' ', '_')).strip().replace(' ', '_')
         self.categorie_path = categorie_path
-
+        
+    # Create folder for the categorie in the name of categorie and return the paths
     def create_folder(self):
         self.pathCategorie = os.path.join(self.categorie_path, 'data', self.safe_categorie_name)
         if not os.path.exists(self.pathCategorie):
             os.makedirs(self.pathCategorie)
-
+            
+        # Create a folder for the images
         self.pathImage = os.path.join(self.pathCategorie, 'images')
         if not os.path.exists(self.pathImage):
             os.makedirs(self.pathImage)
-
+            
+        # Create a csv file for the data
         self.pathFile = os.path.join(self.pathCategorie, 'data.csv')
         if not os.path.exists(self.pathFile):
             with open(self.pathFile, 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(['Product Name', 'Price', 'Image URL'])
-
+                
+    # Get all sub-categories in the category
     def get_all_sub_categorie(self, driver):
         self.product_elements = driver.find_elements(By.CSS_SELECTOR, 'div.hugo4-pc-grid-item')
         if not self.product_elements:
             print("Aucun produit trouvé dans cette catégorie.")
             return []
-
-        links = []
+        
+        links = [] # List to store the links of the sub-categories
         while True:
             try:
+                # Ask the user to enter the number of sub-categories to scrap
                 n = int(input(f"Entrez le nombre de sous-catégories à scrapper (max {len(self.product_elements)}) : "))
                 if n <= len(self.product_elements):
                     for i, product in enumerate(self.product_elements[:n]):

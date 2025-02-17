@@ -1,1 +1,1 @@
-from controlers import scrape_categorie_controler, scrape_default_controler
+from . import scrape_categorie_controler, scrape_default_controler
