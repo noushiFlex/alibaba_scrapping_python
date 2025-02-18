@@ -20,7 +20,7 @@ A Python-based web scraping tool designed to extract product information from Al
 
 1. Clone this repository:
 ```bash
-git clone [https://github.com/yourusername/alibaba_scrapping_python.git](https://github.com/noushiFlex/alibaba_scrapping_python.git)
+git clone https://github.com/noushiFlex/alibaba_scrapping_python.git
 cd alibaba_scrapping_python
 python -m venv venv
 venv/Scripts/Activate
